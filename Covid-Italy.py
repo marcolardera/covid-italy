@@ -20,6 +20,7 @@ source_reg="https://raw.githubusercontent.com/pcm-dpc/COVID-19/master/dati-regio
 df_naz=pd.read_csv (source_naz, sep=",")
 df_reg=pd.read_csv (source_reg, sep=",")
 
+#Cleaning operations
 df_naz.drop (["stato","note_it","note_en"], axis=1, inplace=True)
 df_reg.drop (["stato","codice_regione","lat","long","note_it","note_en"], axis=1, inplace=True)
 df_reg.sort_values (["denominazione_regione","data"], inplace=True)
@@ -29,7 +30,7 @@ df_reg ["crescita"]=df_reg ["totale_casi"]/df_reg ["totale_casi"].shift (1)
 df_naz.replace (np.nan, 0, inplace=True)
 df_reg.replace ([np.nan,np.inf], 0, inplace=True)
 
-#Workaround for hiding the menu
+#Workaround for hiding the Streamlit menu
 hide_menu_style = "<style>#MainMenu {visibility: hidden;}</style>"
 st.markdown (hide_menu_style, unsafe_allow_html=True)
 
@@ -284,3 +285,4 @@ st.markdown ("Tutti i dati sono estratti in tempo reale dal repository ufficiale
 st.header ("Contatti")
 
 st.markdown ("Marco Lardera - [larderamarco@hotmail.com](mailto:larderamarco@hotmail.com)")
+st.markdown ("[Github Repository](https://github.com/marcolardera/covid-italy)")
