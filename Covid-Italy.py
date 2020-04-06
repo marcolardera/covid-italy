@@ -19,6 +19,7 @@ source_reg="https://raw.githubusercontent.com/pcm-dpc/COVID-19/master/dati-regio
 
 df_naz=pd.read_csv (source_naz, sep=",")
 df_reg=pd.read_csv (source_reg, sep=",")
+df_reg_ranking=df_reg [-21:].set_index ("denominazione_regione").sort_values ("totale_casi", ascending=False)
 
 #Cleaning operations
 df_naz.drop (["stato","note_it","note_en"], axis=1, inplace=True)
@@ -29,6 +30,7 @@ df_naz ["crescita"]=df_naz ["totale_casi"]/df_naz ["totale_casi"].shift (1)
 df_reg ["crescita"]=df_reg ["totale_casi"]/df_reg ["totale_casi"].shift (1)
 df_naz.replace (np.nan, 0, inplace=True)
 df_reg.replace ([np.nan,np.inf], 0, inplace=True)
+df_reg_ranking.rename (columns={"totale_casi":"Casi"}, inplace=True)
 
 #Workaround for hiding the Streamlit menu
 hide_menu_style = "<style>#MainMenu {visibility: hidden;}</style>"
@@ -55,6 +57,8 @@ st.sidebar.markdown (f"**Guariti:** {dimessi_guariti}")
 
 st.sidebar.text ("")
 st.sidebar.markdown (f"Oggi **{nuovi_positivi}** nuovi casi (**+{crescita.round(2)}%**)")
+
+st.sidebar.table (df_reg_ranking["Casi"])
 
 #*** SIDEBAR END ***
 
