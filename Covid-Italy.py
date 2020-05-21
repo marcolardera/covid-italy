@@ -28,6 +28,8 @@ df_reg.sort_values (["denominazione_regione","data"], inplace=True)
 df_reg.reset_index (drop=True, inplace=True)
 df_naz ["crescita"]=df_naz ["totale_casi"]/df_naz ["totale_casi"].shift (1)
 df_reg ["crescita"]=df_reg ["totale_casi"]/df_reg ["totale_casi"].shift (1)
+df_naz ["casi_per_tamponi"]=df_naz ["totale_casi"]/df_naz ["tamponi"]
+df_reg ["casi_per_tamponi"]=df_reg ["totale_casi"]/df_reg ["tamponi"]
 df_naz.replace (np.nan, 0, inplace=True)
 df_reg.replace ([np.nan,np.inf], 0, inplace=True)
 df_reg_ranking.rename (columns={"totale_casi":"Casi"}, inplace=True)
@@ -48,6 +50,7 @@ deceduti=df_naz.iloc[-1]["deceduti"]
 dimessi_guariti=df_naz.iloc[-1]["dimessi_guariti"]
 nuovi_positivi=df_naz.iloc[-1]["nuovi_positivi"]
 crescita=(df_naz.iloc[-1]["crescita"]*100)-100
+variazione_positivi=df_naz.iloc[-1]["variazione_totale_positivi"]
 
 st.sidebar.markdown (f"**Casi totali:** {totale_casi}")
 st.sidebar.markdown (f"**Tamponi:** {tamponi}")
@@ -56,7 +59,9 @@ st.sidebar.markdown (f"**Deceduti:** {deceduti}")
 st.sidebar.markdown (f"**Guariti:** {dimessi_guariti}")
 
 st.sidebar.text ("")
-st.sidebar.markdown (f"Oggi **{nuovi_positivi}** nuovi casi (**+{crescita.round(2)}%**)")
+st.sidebar.markdown ("Oggi:")
+st.sidebar.markdown (f"- **{nuovi_positivi}** nuovi casi totali (**+{crescita.round(2)}%**)")
+st.sidebar.markdown (f"- **{variazione_positivi}** pazienti attualmente positivi")
 
 st.sidebar.table (df_reg_ranking["Casi"])
 
@@ -126,7 +131,8 @@ st.header ("Casi totali")
 
 if select=="Italia":
 	sns.lineplot (x=df_naz.index, y="totale_casi", marker="o", data=df_naz)
-	plt.xticks(df_naz.index)
+	#plt.xticks(df_naz.index)
+	plt.xticks (range(0, len(df_naz.index), 5))
 	plt.yticks (fontsize=20)
 	plt.title ("Andamento casi totali nazionali", fontsize=20)
 	plt.xlabel ("Giorni", fontsize=20)
@@ -134,7 +140,7 @@ if select=="Italia":
 	st.pyplot ()
 else:
 	sns.lineplot (x=df_naz.index, y="totale_casi", marker="o", data=df_reg[df_reg["denominazione_regione"]==select])
-	plt.xticks(df_naz.index)
+	plt.xticks (range(0, len(df_naz.index), 5))
 	plt.yticks (fontsize=20)
 	plt.title (f"Andamento casi totali {select}", fontsize=20)
 	plt.xlabel ("Giorni", fontsize=20)
@@ -145,7 +151,7 @@ st.header ("Tamponi effettuati")
 
 if select=="Italia":
 	sns.lineplot (x=df_naz.index, y="tamponi", marker="o", data=df_naz)
-	plt.xticks(df_naz.index)
+	plt.xticks (range(0, len(df_naz.index), 5))
 	plt.yticks (fontsize=20)
 	plt.title ("Andamento nazionale tamponi effettuati", fontsize=20)
 	plt.xlabel ("Giorni", fontsize=20)
@@ -153,18 +159,37 @@ if select=="Italia":
 	st.pyplot ()
 else:
 	sns.lineplot (x=df_naz.index, y="tamponi", marker="o", data=df_reg[df_reg["denominazione_regione"]==select])
-	plt.xticks(df_naz.index)
+	plt.xticks (range(0, len(df_naz.index), 5))
 	plt.yticks (fontsize=20)
 	plt.title (f"Andamento tamponi effettuati {select}", fontsize=20)
 	plt.xlabel ("Giorni", fontsize=20)
 	plt.ylabel ("Tamponi", fontsize=20)
 	st.pyplot ()
 
+st.header ("Casi per tamponi")
+
+if select=="Italia":
+	sns.lineplot (x=df_naz.index, y="casi_per_tamponi", marker="o", data=df_naz)
+	plt.xticks (range(0, len(df_naz.index), 5))
+	plt.yticks (fontsize=20)
+	plt.title ("Andamento nazionale casi per tamponi", fontsize=20)
+	plt.xlabel ("Giorni", fontsize=20)
+	plt.ylabel ("Casi per tamponi", fontsize=20)
+	st.pyplot ()
+else:
+	sns.lineplot (x=df_naz.index, y="casi_per_tamponi", marker="o", data=df_reg[df_reg["denominazione_regione"]==select])
+	plt.xticks (range(0, len(df_naz.index), 5))
+	plt.yticks (fontsize=20)
+	plt.title (f"Andamento casi per tamponi {select}", fontsize=20)
+	plt.xlabel ("Giorni", fontsize=20)
+	plt.ylabel ("Casi per tamponi", fontsize=20)
+	st.pyplot ()
+
 st.header ("Nuovi casi giornalieri")
 
 if select=="Italia":
 	sns.lineplot (x=df_naz.index, y="nuovi_positivi", marker="o", data=df_naz)
-	plt.xticks(df_naz.index)
+	plt.xticks (range(0, len(df_naz.index), 5))
 	plt.yticks (fontsize=20)
 	plt.title ("Andamento nazionale nuovi casi giornalieri", fontsize=20)
 	plt.xlabel ("Giorni", fontsize=20)
@@ -172,7 +197,7 @@ if select=="Italia":
 	st.pyplot ()
 else:
 	sns.lineplot (x=df_naz.index, y="nuovi_positivi", marker="o", data=df_reg[df_reg["denominazione_regione"]==select])
-	plt.xticks(df_naz.index)
+	plt.xticks (range(0, len(df_naz.index), 5))
 	plt.yticks (fontsize=20)
 	plt.title (f"Andamento nuovi casi giornalieri {select}", fontsize=20)
 	plt.xlabel ("Giorni", fontsize=20)
@@ -183,7 +208,7 @@ st.header ("Coefficiente di crescita")
 
 if select=="Italia":
 	sns.lineplot (x=df_naz[1:].index, y="crescita", marker="o", data=df_naz[1:])
-	plt.xticks(df_naz.index)
+	plt.xticks (range(0, len(df_naz.index), 5))
 	plt.yticks (fontsize=20)
 	plt.title ("Andamento nazionale coefficiente di crescita", fontsize=20)
 	plt.xlabel ("Giorni", fontsize=20)
@@ -191,7 +216,7 @@ if select=="Italia":
 	st.pyplot ()
 else:
 	sns.lineplot (x=df_naz[1:].index, y="crescita", marker="o", data=df_reg[df_reg["denominazione_regione"]==select][1:])
-	plt.xticks(df_naz.index)
+	plt.xticks (range(0, len(df_naz.index), 5))
 	plt.yticks (fontsize=20)
 	plt.title (f"Andamento coefficiente di crescita {select}", fontsize=20)
 	plt.xlabel ("Giorni", fontsize=20)
@@ -202,7 +227,7 @@ st.header ("Casi positivi")
 
 if select=="Italia":
 	sns.lineplot (x=df_naz.index, y="totale_positivi", marker="o", data=df_naz)
-	plt.xticks(df_naz.index)
+	plt.xticks (range(0, len(df_naz.index), 5))
 	plt.yticks (fontsize=20)
 	plt.title ("Andamento nazionale casi positivi", fontsize=20)
 	plt.xlabel ("Giorni", fontsize=20)
@@ -210,7 +235,7 @@ if select=="Italia":
 	st.pyplot ()
 else:
 	sns.lineplot (x=df_naz.index, y="totale_positivi", marker="o", data=df_reg[df_reg["denominazione_regione"]==select])
-	plt.xticks(df_naz.index)
+	plt.xticks (range(0, len(df_naz.index), 5))
 	plt.yticks (fontsize=20)
 	plt.title (f"Andamento casi positivi {select}", fontsize=20)
 	plt.xlabel ("Giorni", fontsize=20)
@@ -223,7 +248,7 @@ st.header ("Decessi")
 
 if select=="Italia":
 	sns.lineplot (x=df_naz.index, y="deceduti", marker="o", data=df_naz)
-	plt.xticks(df_naz.index)
+	plt.xticks (range(0, len(df_naz.index), 5))
 	plt.yticks (fontsize=20)
 	plt.title ("Andamento nazionale decessi", fontsize=20)
 	plt.xlabel ("Giorni", fontsize=20)
@@ -231,7 +256,7 @@ if select=="Italia":
 	st.pyplot ()
 else:
 	sns.lineplot (x=df_naz.index, y="deceduti", marker="o", data=df_reg[df_reg["denominazione_regione"]==select])
-	plt.xticks(df_naz.index)
+	plt.xticks (range(0, len(df_naz.index), 5))
 	plt.yticks (fontsize=20)
 	plt.title (f"Andamento decessi {select}", fontsize=20)
 	plt.xlabel ("Giorni", fontsize=20)
@@ -242,7 +267,7 @@ st.header ("Guarigioni")
 
 if select=="Italia":
 	sns.lineplot (x=df_naz.index, y="dimessi_guariti", marker="o", data=df_naz)
-	plt.xticks(df_naz.index)
+	plt.xticks (range(0, len(df_naz.index), 5))
 	plt.yticks (fontsize=20)
 	plt.title ("Andamento nazionale guarigioni", fontsize=20)
 	plt.xlabel ("Giorni", fontsize=20)
@@ -250,7 +275,7 @@ if select=="Italia":
 	st.pyplot ()
 else:
 	sns.lineplot (x=df_naz.index, y="dimessi_guariti", marker="o", data=df_reg[df_reg["denominazione_regione"]==select])
-	plt.xticks(df_naz.index)
+	plt.xticks (range(0, len(df_naz.index), 5))
 	plt.yticks (fontsize=20)
 	plt.title (f"Andamento guarigioni {select}", fontsize=20)
 	plt.xlabel ("Giorni", fontsize=20)
