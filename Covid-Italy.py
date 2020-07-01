@@ -22,8 +22,8 @@ df_reg=pd.read_csv (source_reg, sep=",")
 df_reg_ranking=df_reg [-21:].set_index ("denominazione_regione").sort_values ("totale_casi", ascending=False)
 
 #Cleaning operations
-df_naz.drop (["stato","note_it","note_en"], axis=1, inplace=True)
-df_reg.drop (["stato","codice_regione","lat","long","note_it","note_en"], axis=1, inplace=True)
+df_naz.drop (["stato","note"], axis=1, inplace=True)
+df_reg.drop (["stato","codice_regione","lat","long","note"], axis=1, inplace=True)
 df_reg.sort_values (["denominazione_regione","data"], inplace=True)
 df_reg.reset_index (drop=True, inplace=True)
 df_naz ["crescita"]=df_naz ["totale_casi"]/df_naz ["totale_casi"].shift (1)
