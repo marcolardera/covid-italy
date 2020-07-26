@@ -52,6 +52,9 @@ nuovi_positivi=df_naz.iloc[-1]["nuovi_positivi"]
 crescita=(df_naz.iloc[-1]["crescita"]*100)-100
 variazione_positivi=df_naz.iloc[-1]["variazione_totale_positivi"]
 
+if variazione_positivi > 0 :
+	variazione_positivi=f"+{variazione_positivi}"
+
 st.sidebar.markdown (f"**Casi totali:** {totale_casi}")
 st.sidebar.markdown (f"**Tamponi:** {tamponi}")
 st.sidebar.markdown (f"**Totale positivi:** {totale_positivi}")
