@@ -11,6 +11,14 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from PIL import Image
 
+#Annotate a matplotlib/seaborn barplot with the value of each patch
+def annotate_barplot (plot):
+	for p in plot.patches:
+		plot.text (p.get_x()+p.get_width()/2, p.get_height(), int(p.get_height()),
+		ha="center", 
+		fontsize="xx-large",
+		fontweight="bold")
+
 plt.rcParams ["figure.figsize"]=[16,8]
 sns.set_style ("darkgrid")
 
@@ -293,10 +301,11 @@ if select=="Italia":
 	terapia_intensiva=df_naz.iloc[-1]["terapia_intensiva"]
 	x=["Isolamento domiciliare", "Ricoverati generici", "Terapia intensiva"]
 	y=[isolamento, ricoverati, terapia_intensiva]
-	sns.barplot(x=x, y=y)
+	bp=sns.barplot(x=x, y=y)
 	plt.xticks (fontsize=20)
 	plt.yticks (fontsize=20)
 	plt.title ("Suddivisione nazionale casi positivi", fontsize=20)
+	annotate_barplot (bp)
 	st.pyplot ()
 else:
 	isolamento=df_reg[df_reg["denominazione_regione"]==select].iloc[-1]["isolamento_domiciliare"]
@@ -304,10 +313,11 @@ else:
 	terapia_intensiva=df_reg[df_reg["denominazione_regione"]==select].iloc[-1]["terapia_intensiva"]
 	x=["Isolamento domiciliare", "Ricoverati generici", "Terapia intensiva"]
 	y=[isolamento, ricoverati, terapia_intensiva]
-	sns.barplot(x=x, y=y)
+	bp=sns.barplot(x=x, y=y)
 	plt.xticks (fontsize=20)
 	plt.yticks (fontsize=20)
 	plt.title (f"Suddivisione casi positivi {select}", fontsize=20)
+	annotate_barplot (bp)
 	st.pyplot ()
 
 st.header ("Fonti")
