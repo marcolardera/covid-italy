@@ -19,7 +19,7 @@ df_reg_ranking=df_reg [-21:].set_index ("denominazione_regione").sort_values ("t
 
 #Cleaning operations
 df_naz.drop (["stato","note"], axis=1, inplace=True)
-df_reg.drop (["stato","codice_regione","lat","long","note"], axis=1, inplace=True)
+df_reg.drop (["stato","codice_regione","note"], axis=1, inplace=True)
 df_reg.sort_values (["denominazione_regione","data"], inplace=True)
 df_reg.reset_index (drop=True, inplace=True)
 df_naz ["crescita"]=df_naz ["totale_casi"]/df_naz ["totale_casi"].shift (1)
@@ -82,6 +82,27 @@ if st.checkbox ("Mostra i dataset completi"):
 	st.dataframe (df_naz)
 	st.subheader (f"Dataset suddiviso per regioni ([Fonte]({source_reg}))")
 	st.dataframe (df_reg)
+
+#*** SCATTER MAP START***
+
+st.header ("Mappa casi positivi")
+
+map_config={"scrollZoom": False, "displayModeBar": False}
+reg_map=px.scatter_geo (df_reg_ranking, lat="lat", lon="long", size="totale_positivi", 
+	center={"lat": 41.9145, "lon": 12.3343},
+	labels={"totale_positivi": "Casi positivi"},
+	hover_data={"lat": False, "long": False},
+	hover_name=df_reg_ranking.index,
+	scope="europe",
+	height=700,
+	size_max=100,
+	title="Casi attualmente positivi per regione")
+reg_map.update_geos (fitbounds="locations", resolution=50)
+st.plotly_chart (reg_map, use_container_width=True, config=map_config)
+
+#*** SCATTER MAP END***
+
+st.markdown ("---") 
 
 options=["Italia",
 "Abruzzo",
@@ -315,6 +336,8 @@ else:
 
 	figure=px.bar (df_bar, x="x", y="y", labels={"x": "Tipologia", "y": "Numerosità"}, text="y", title=f"Suddivisione casi positivi {select}")
 	st.plotly_chart (figure, use_container_width=True)
+
+st.markdown ("---")
 
 st.header ("Fonti")
 
