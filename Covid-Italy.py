@@ -301,7 +301,7 @@ if select=="Italia":
 	y=[isolamento, ricoverati, terapia_intensiva]
 	df_bar=pd.DataFrame ({"x":x, "y":y})
 
-	figure=px.bar (df_bar, x="x", y="y", labels={"x": "Tipologia", "y": "Numerosità"}, text="y")
+	figure=px.bar (df_bar, x="x", y="y", labels={"x": "Tipologia", "y": "Numerosità"}, text="y", title="Suddivisione nazionale casi positivi")
 	st.plotly_chart (figure, use_container_width=True)
 
 else:
@@ -313,7 +313,7 @@ else:
 	y=[isolamento, ricoverati, terapia_intensiva]
 	df_bar=pd.DataFrame ({"x":x, "y":y})
 
-	figure=px.bar (df_bar, x="x", y="y", labels={"x": "Tipologia", "y": "Numerosità"}, text="y")
+	figure=px.bar (df_bar, x="x", y="y", labels={"x": "Tipologia", "y": "Numerosità"}, text="y", title=f"Suddivisione casi positivi {select}")
 	st.plotly_chart (figure, use_container_width=True)
 
 st.header ("Fonti")
